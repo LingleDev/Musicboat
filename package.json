@@ -18,8 +18,11 @@
   },
   "homepage": "https://github.com/FHGDev/Musicboat#readme",
   "dependencies": {
+    "@discordjs/opus": "^0.3.2",
     "discord.js": "^12.2.0",
     "dotenv": "^8.2.0",
+    "mongoose": "^5.9.19",
+    "ms": "^2.1.2",
     "node-fetch": "^2.6.0",
     "ytdl-core": "^2.1.7"
   }
