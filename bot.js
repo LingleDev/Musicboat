@@ -14,7 +14,7 @@ global.fs = require('fs')
 global.GuildModel = require('./models/Guild')
 global.UserModel = require('./models/User')
 
-mongoose.connect(`mongodb+srv://FHGDev:L0lNo0bl4e5@cluster0-mbmox.gcp.mongodb.net/<dbname>?retryWrites=true&w=majority`, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(`mongodb+srv://FHGDev:${process.env.password}@cluster0-mbmox.gcp.mongodb.net/<dbname>?retryWrites=true&w=majority`, { useNewUrlParser: true, useUnifiedTopology: true })
 .then(() => {
     console.log("Connected to Atlas.")
 })
@@ -28,6 +28,10 @@ fs.readdir('./commands/', (error, files) => {
     files.filter(f => f.endsWith("js")).forEach((f,_i) => {
         bot.commands.set(require(`./commands/${f}`).help.name, require(`./commands/${f}`))
     })
+})
+
+bot.on('guildCreate', (guild) => {
+
 })
 
 bot.on('ready', () => {
