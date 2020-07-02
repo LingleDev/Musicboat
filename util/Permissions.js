@@ -10,11 +10,38 @@ module.exports = Permissions
  * @param {GuildMember} member
  */
 function Permissions(bot, help, member) {
+    if (member.user == bot.owner) return true
+    
     switch(help.permission) {
+
         case "GuildAdmin":
-            GuildModel.findOne({ id: member.user.id }, (err,doc) => {
-                
+            GuildModel.findOne({ id: member.guild.id }, (err,doc) => {
+                if (member.roles.cache.has(doc.admin) || member.guild.owner) {
+                    return true
+                } else return false;
             })
+        break;
+
+        case "PremiumOnly":
+            GuildModel.findOne({ id: member.guild.id }, (err,doc) => {
+                if (doc.premium) {
+                    return true;
+                } else return false;
+            })
+        break;
+
+        case "DJOnly":
+            GuildModel.findOne({ id: member.guild.id }, (err,doc) => {
+                if (doc.DJEnabled) {
+                    if (member.roles.cache.has(doc.dj) || member.guild.owner) {
+                        return true
+                    } else return false;
+                } else return true;
+            })
+        break;
+
+        default:
+            return false;
         break;
     }
 }

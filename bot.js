@@ -5,16 +5,20 @@ require('dotenv').config()
 const discord = require('discord.js')
 const mongoose = require('mongoose')
 const bot = new discord.Client()
+const DateMod = require('./util/Date')
+const { brotliCompress } = require('zlib')
 bot.commands = new discord.Collection()
 bot.prefix = "m-"
 bot.events = new discord.Collection()
+bot.owner;
+bot.invite;
 
 global.embed = discord.MessageEmbed
 global.fs = require('fs')
 global.GuildModel = require('./models/Guild')
 global.UserModel = require('./models/User')
 
-mongoose.connect(`mongodb+srv://FHGDev:${process.env.password}@cluster0-mbmox.gcp.mongodb.net/<dbname>?retryWrites=true&w=majority`, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(`mongodb+srv://FHGDev:${process.env.password}@cluster0-mbmox.gcp.mongodb.net/Musicboat?retryWrites=true&w=majority`, { useNewUrlParser: true, useUnifiedTopology: true })
 .then(() => {
     console.log("Connected to Atlas.")
 })
@@ -34,8 +38,38 @@ bot.on('guildCreate', (guild) => {
 
 })
 
-bot.on('ready', () => {
-    console.log(`${bot.user.username} is ready!`)
+bot.on('guildDelete', (guild) => {
+
+})
+
+bot.on('ready', async () => {
+    bot.user.setActivity("Loading Musicboat...")
+    
+    setTimeout(() => {
+        console.log(`${bot.user.username} is ready at ${DateMod.getBotReadyAtFormatted(bot)}`)
+
+        bot.user.setActivity(`Musicboat ready at ${DateMod.getBotReadyAtFormatted(bot)}`)
+    }, 5000)
+
+    var activity = ""
+
+    if (bot.guilds.cache.size <= 1) {
+            activity = `music in ${bot.guilds.cache.size} server`
+    } else {
+            activity = `music in ${bot.guilds.cache.size} servers`
+    }
+
+    setTimeout(() => {
+        bot.user.setActivity(activity, { type: "PLAYING" })
+    }, 7500)
+
+    const app = await bot.fetchApplication("@me")
+
+    bot.owner = app.owner;
+
+    const invite = await bot.generateInvite(["SPEAK", "SEND_MESSAGES", "USE_VAD"])
+
+    bot.invite = invite
 })
 
 bot.on('message', message => {
